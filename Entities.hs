@@ -3,8 +3,6 @@ module Entities where
 import           Control.Lens
 import           Items
 
-type Fraction = (Int,Int)
-
 data EntityType = Fauna { _healthCurrent :: Int
                         , _healthMax     :: Int
                         , _size          :: Int
@@ -25,13 +23,14 @@ data EntityType = Fauna { _healthCurrent :: Int
                   Flora { }
 
 
-data Entity = Entity { _name :: String
-                     , _type :: EntityType
+data Entity = Entity { _name                :: String
+                     , _type                :: EntityType
                      , _lowTierHarvestItems :: Inventory
                      , _midTierHarvestItems :: Inventory
                      , _topTierHarvestItems :: Inventory
-                     , _growTime :: Int
-                     , _harvestDifficulty :: Int
+                     , _growTime            :: Int
+                     , _harvestDifficulty   :: Int
                      }
 
 $(makeLenses ''Entity)
+$(makeLenses ''EntityType)
