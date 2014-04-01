@@ -5,21 +5,33 @@ import           Items
 
 type Fraction = (Int,Int)
 
-data Entity = Entity { _name                    :: String
-                     , _health                  :: Fraction
-                     , _size :: Int
-                     , _head                    :: String
-                     , _body1                   :: String
-                     , _body2                   :: Maybe String
-                     , _legs                    :: String
-                     , _wings                   :: Maybe String
-                     , _tail                    :: Maybe String
-                     , _weapon1                 :: Item -- 2 weapon slots
-                     , _weapon2                 :: Item
-                     , _armor                   :: Item
-                     , _sizeModifier            :: Float
-                     , _defense                 :: Int
-                     , _inventory               :: Inventory
+data EntityType = Fauna { _healthCurrent :: Int
+                        , _healthMax     :: Int
+                        , _size          :: Int
+                        , _head          :: String
+                        , _body1         :: String
+                        , _body2         :: Maybe String
+                        , _legs          :: String
+                        , _wings         :: String
+                        , _tail          :: Maybe String
+                        , _weapon1       :: Item
+                        , _weapon2       :: Maybe Item
+                        , _armor         :: Item
+                        , _defense       :: Int
+                        , _movement      :: Int --ticks per move
+                        , _inventory     :: Inventory
+                        }
+                |
+                  Flora { }
+
+
+data Entity = Entity { _name :: String
+                     , _type :: EntityType
+                     , _lowTierHarvestItems :: Inventory
+                     , _midTierHarvestItems :: Inventory
+                     , _topTierHarvestItems :: Inventory
+                     , _growTime :: Int
+                     , _harvestDifficulty :: Int
                      }
 
 $(makeLenses ''Entity)
