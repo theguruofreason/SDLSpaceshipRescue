@@ -6,7 +6,7 @@ import           Items
 data EntityType = Fauna { _healthCurrent :: Int
                         , _healthMax     :: Int
                         , _size          :: Int
-                        , _head          :: String
+                        , _eHead          :: String
                         , _body1         :: String
                         , _body2         :: Maybe String
                         , _legs          :: String
