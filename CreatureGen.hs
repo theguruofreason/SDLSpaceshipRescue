@@ -1,6 +1,7 @@
 {-# LANGUAGE TemplateHaskell #-}
 module CreatureGen where
 import           Control.Lens
+import           Data.List     (zip4, zipWith4)
 import qualified Data.Map      as MAP
 import           Entities
 import           System.Random
@@ -10,12 +11,42 @@ import qualified Text.JSON     as JSON
 --generateNPCCreature difficultyValue = do
 --  startingGen <- newStdGen
 
-letters, vowels, consonants :: [Char]
+bases :: [String]
+bases = ["saur", "gliatop", "grat", "felix", "panth", "canin", "canid", "big", "incat", "zephyr", "rex", "gnat"]
+
+generatePrefixes = do
+  let
+      randomLetters = newStdGen >>= return . randomRs ('a','z')
+  allLetters1 <- randomLetters
+  allLetters2 <- randomLetters
+  let
+      vowels = filter (`elem` "aeiouy") allLetters1
+      consonants = filter (not . (`elem` "aeiouy")) allLetters1
+      determinePrefix (firstLetter, vowel, consonant, anyLetter) = if firstLetter `elem` "aeiouy" then
+                                                                  firstLetter : consonant : anyLetter : []
+                                                              else
+                                                                  firstLetter : vowel : anyLetter: []
+  return $ map determinePrefix $ zip4 allLetters1 vowels consonants allLetters2
+
+generateSuffixes = do
+  let
+      randomLetters = newStdGen >>= return . randomRs ('a','z')
+  allLetters1 <- randomLetters
+  let
+      vowels = filter (`elem` "aeiouy") allLetters1
+      consonants = filter (not . (`elem` "aeiouy")) allLetters1
+      determineSuffix (firstLetter, vowel, consonant) = if firstLetter `elem` "aeiouy" then
+                                                            firstLetter : consonant : []
+                                                        else
+                                                            firstLetter : vowel : []
+  return $ map determineSuffix $ zip3 allLetters1 vowels consonants
+
+
+
+{-letters, vowels, consonants :: [Char]
 letters = ['a','b'..'z']
 vowels = ['a','e','i','o','u','y']
 consonants = filter (not . (`elem` vowels)) letters
-bases :: [String]
-bases = ["saur", "gliatop", "grat", "felix", "panth", "canin", "canid", "big", "incat", "zephyr", "rex", "gnat"]
 
 generatePrefix :: StdGen -> (String, StdGen)
 generatePrefix generator = case fst $ useThird gen3 of
@@ -30,7 +61,7 @@ generatePrefix generator = case fst $ useThird gen3 of
       useThird gen = (random gen) :: (Bool, StdGen)
 
 generateBaseOfName :: (String, StdGen) -> (String, StdGen)
-generateBaseOfName (prefix, generator) = case (head $ reverse prefix) `elem` vowels of
+generateBaseOfName (prefix, generator) = case last prefix `elem` vowels of
                                            True -> generateBaseFromVowel prefix generator
                                            False -> generateBaseFromConsonant prefix generator
     where
@@ -40,9 +71,8 @@ generateBaseOfName (prefix, generator) = case (head $ reverse prefix) `elem` vow
       generateVowel gen = vowels !! fst (randomR (0, length vowels - 1) gen)
 
 
---generateName :: StdGen -> IO (String, StdGen)
---generateName generator = do
---  prefix <- generatePrefix generator
---  return (prefix, generator)
-
-
+generateName :: StdGen -> IO (String, StdGen)
+generateName generator = do
+  prefix <- generatePrefix generator
+  return (prefix, generator)
+-}
