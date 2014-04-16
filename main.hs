@@ -11,13 +11,14 @@ import           System.FilePath
 
 main :: IO ()
 main = SDL.withInit [SDL.InitEverything] $ do
-         window <-  SDL.trySetVideoMode 640 480 24 [SDL.HWSurface]
+         window <- SDL.trySetVideoMode 640 480 24 [SDL.HWSurface]
          checkSuccess window
          keyRepeatSuccess <- SDL.enableKeyRepeat 500 100
          spriteSheetSurface <- loadImageToSurface ("." </> "resources" </> "Belal_Smooth_Walls.png")
-         SDL.setClipRect spriteSheetSurface (Just $ SDL.Rect 0 48 16 16)
-         charSprite <- SDL.getClipRect spriteSheetSurface
-         mainLoop (fromJust window) charSprite
+         let
+             spriteRect = SDL.Rect 16 16 16 16
+             positionRect = SDL.Rect 320 240 16 16
+         mainLoop (fromJust window) spriteSheetSurface spriteRect positionRect
          SDL.quit
 
 -- imageToSurface image =
@@ -45,27 +46,28 @@ checkSuccess (Just _) = return ()
 defaultRect :: SDL.Rect
 defaultRect = SDL.Rect 320 240 10 10
 
-mainLoop :: SDL.Surface -> SDL.Rect -> IO ()
-mainLoop surface rectangle = do
+mainLoop :: SDL.Surface -> SDL.Surface -> SDL.Rect -> SDL.Rect -> IO ()
+mainLoop surface spriteSheet sprite position = do
   ticks <- SDL.getTicks
   putStrLn $ show ticks
-  SDL.updateRect surface rectangle
-  SDL.fillRect surface (Just rectangle) (SDL.Pixel 0xFF0000)
+  SDL.updateRect surface position
+  SDL.fillRect surface Nothing (SDL.Pixel 0x000000)
+  SDL.blitSurface spriteSheet (Just sprite) surface (Just position)
   SDL.flip surface
   event <- SDL.waitEvent
   case event of
-    SDL.KeyDown k -> keyHandler (SDL.symKey k) surface rectangle
+    SDL.KeyDown k -> keyHandler (SDL.symKey k) surface spriteSheet sprite position
     SDL.MouseButtonDown _ _ _ -> return ()
-    otherwise -> mainLoop surface rectangle
+    _ -> mainLoop surface spriteSheet sprite position
 
-keyHandler :: SDL.SDLKey -> SDL.Surface -> SDL.Rect -> IO ()
-keyHandler k window rectangle =
+keyHandler :: SDL.SDLKey -> SDL.Surface -> SDL.Surface -> SDL.Rect -> SDL.Rect -> IO ()
+keyHandler k window spriteSheet sprite position =
     case k of
-      SDL.SDLK_UP -> mainLoop window $ changeableRectangle rectangle $ Just UP
-      SDL.SDLK_DOWN  -> mainLoop window $ changeableRectangle rectangle $ Just DOWN
-      SDL.SDLK_LEFT -> mainLoop window $ changeableRectangle rectangle $ Just LEFT
-      SDL.SDLK_RIGHT -> mainLoop window $ changeableRectangle rectangle $ Just RIGHT
-      otherwise -> return ()
+      SDL.SDLK_UP -> mainLoop window spriteSheet sprite $ changeableRectangle position $ Just UP
+      SDL.SDLK_DOWN  -> mainLoop window spriteSheet sprite $ changeableRectangle position $ Just DOWN
+      SDL.SDLK_LEFT -> mainLoop window spriteSheet sprite $ changeableRectangle position $ Just LEFT
+      SDL.SDLK_RIGHT -> mainLoop window spriteSheet sprite $ changeableRectangle position $ Just RIGHT
+      _ -> return ()
 
 data Direction = UP | DOWN | LEFT | RIGHT
 
