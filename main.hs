@@ -59,20 +59,21 @@ mainLoop surface rectangle = do
     otherwise -> mainLoop surface rectangle
 
 keyHandler :: SDL.SDLKey -> SDL.Surface -> SDL.Rect -> IO ()
-keyHandler k window rectangle = case k of
-                 SDL.SDLK_UP -> mainLoop window $ changeableRectangle rectangle $ Just UP
-                 SDL.SDLK_DOWN  -> mainLoop window $ changeableRectangle rectangle $ Just DOWN
-                 SDL.SDLK_LEFT -> mainLoop window $ changeableRectangle rectangle $ Just LEFT
-                 SDL.SDLK_RIGHT -> mainLoop window $ changeableRectangle rectangle $ Just RIGHT
-                 otherwise -> return ()
-
+keyHandler k window rectangle =
+    case k of
+      SDL.SDLK_UP -> mainLoop window $ changeableRectangle rectangle $ Just UP
+      SDL.SDLK_DOWN  -> mainLoop window $ changeableRectangle rectangle $ Just DOWN
+      SDL.SDLK_LEFT -> mainLoop window $ changeableRectangle rectangle $ Just LEFT
+      SDL.SDLK_RIGHT -> mainLoop window $ changeableRectangle rectangle $ Just RIGHT
+      otherwise -> return ()
 
 data Direction = UP | DOWN | LEFT | RIGHT
 
 changeableRectangle :: SDL.Rect -> Maybe Direction -> SDL.Rect
-changeableRectangle oldRect direction = case direction of
-                                             Just UP -> changeableRectangle (oldRect {SDL.rectY = (SDL.rectY oldRect) - 16}) Nothing
-                                             Just DOWN -> changeableRectangle (oldRect {SDL.rectY = (SDL.rectY oldRect) + 16}) Nothing
-                                             Just LEFT -> changeableRectangle (oldRect {SDL.rectX = (SDL.rectX oldRect) - 16}) Nothing
-                                             Just RIGHT -> changeableRectangle (oldRect {SDL.rectX = (SDL.rectX oldRect) +16}) Nothing
-                                             Nothing -> oldRect
+changeableRectangle oldRect direction =
+    case direction of
+      Just UP -> changeableRectangle (oldRect {SDL.rectY = (SDL.rectY oldRect) - 16}) Nothing
+      Just DOWN -> changeableRectangle (oldRect {SDL.rectY = (SDL.rectY oldRect) + 16}) Nothing
+      Just LEFT -> changeableRectangle (oldRect {SDL.rectX = (SDL.rectX oldRect) - 16}) Nothing
+      Just RIGHT -> changeableRectangle (oldRect {SDL.rectX = (SDL.rectX oldRect) +16}) Nothing
+      Nothing -> oldRect
