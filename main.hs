@@ -13,8 +13,17 @@ import           System.FilePath
 main :: IO ()
 main = do
   spriteSheet <- loadDevILPicture ("." </> "resources" </> "Belal_Smooth_Walls.png")
+  let
+      window = InWindow "test 1" (640, 480) (10, 10)
   mainLoop spriteSheet
 
 
 data SpriteSheet = SpriteSheet Int Int Picture
 
+data World = World { _characterPosition :: (Int, Int)
+                   , _characterSprite :: Picture
+                   , _spriteSheet :: SpriteSheet
+                   }
+
+defaultworld spriteSheet = World { _characterPosition = (10,10)
+                     , _characterSprite = 
