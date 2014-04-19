@@ -42,6 +42,9 @@ generateSuffixes = do
   return $ map determineSuffix $ zip3 allLetters1 vowels consonants
 
 
+generateName :: StdGen -> (String, StdGen)
+generateName gen = 
+         
 
 {-letters, vowels, consonants :: [Char]
 letters = ['a','b'..'z']
