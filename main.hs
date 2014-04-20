@@ -32,6 +32,6 @@ main = do
   spriteSheet <- readRepaImage ("." </> "resources" </> "Nice_curses_12x12.png")
   let
       window = InWindow "test 1" (800, 640) (0, 0)
-      charShape = (shapeOfList [12, 12, 4], shapeOfList [12, 12, 4])
-      charSprite = imageToPicture $ computeS $ extract (fst charShape) (snd charShape) spriteSheet
+      charShape = (shapeOfList [4, 12, 12], shapeOfList [4, 12, 12])
+      charSprite = imageToPicture True $ computeS $ extract (fst charShape) (snd charShape) spriteSheet
   play window black 60 (defaultWorld (scale 2 3 charSprite)) drawWorld (flip const) (flip const)
