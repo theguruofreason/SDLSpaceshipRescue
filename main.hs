@@ -56,3 +56,5 @@ keymap = fromList [ ((SpecialKey KeyUp, Down), characterMove 0 1 )
   
 keyHandler :: Event -> World -> World
 keyHandler (EventKey k ks _ _) = findWithDefault id (k, ks) keymap
+keyHandler (EventMotion _) = id
+keyHandler (EventResize _) = id
