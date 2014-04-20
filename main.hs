@@ -27,11 +27,15 @@ defaultWorld image = World { _characterPosition = (10,10)
 drawWorld :: World -> Picture
 drawWorld world = world^.sprites
 
+
 main :: IO ()
 main = do
-  spriteSheet <- readRepaImage ("." </> "resources" </> "Nice_curses_12x12.png")
+  (RGBA arr) <- readRepaImage ("." </> "resources" </> "Nice_curses_12x12.png")
+  print . listOfShape . extent $ arr
   let
       window = InWindow "test 1" (800, 640) (0, 0)
-      charShape = (shapeOfList [4, 12, 12], shapeOfList [4, 12, 12])
-      charSprite = imageToPicture True $ computeS $ extract (fst charShape) (snd charShape) spriteSheet
-  play window black 60 (defaultWorld (scale 2 3 charSprite)) drawWorld (flip const) (flip const)
+      (offset, size) = (shapeOfList [4,12,180], shapeOfList [4, 12, 12])
+      (w,h,pic) = imageToPicture True . RGBA . computeS $ extract offset size arr
+      {-charSprite = imageToPicture $ computeS $ extract (fst charShape) (snd charShape) spriteSheet-}
+  play window black 60 (defaultWorld (scale 2 3 pic)) drawWorld (flip const) (flip const)
+
