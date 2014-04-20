@@ -9,25 +9,29 @@ import           Entities
 import           Foreign.ForeignPtr
 import           Graphics.Gloss
 import           Graphics.Gloss.DevIL
+import Graphics.Gloss.Interface.Pure.Game
 import           Items
 import           System.FilePath
+import Data.Map
 
-data World = World { _characterPosition :: (Int, Int)
+data World = World { _characterPosX     :: Float
+                   , _characterPosY     :: Float
                    , _characterSprite   :: Picture
                    , _sprites           :: Picture
                    }
 $(makeLenses ''World)
 
 tileTranslate tiles = 12 * tiles
- 
+
 defaultWorld :: Picture -> World
-defaultWorld image = World { _characterPosition = (tileTranslate 5, tileTranslate 5)
+defaultWorld image = World { _characterPosX = tileTranslate 5
+                           , _characterPosY = tileTranslate 5
                            , _characterSprite = circleSolid 20
                            , _sprites = image
                            }
 
 drawWorld :: World -> Picture
-drawWorld world = translate (world^.characterPosition_1) (world^.characterPosition_2) world^.sprites
+drawWorld world = translate (world^.characterPosX) (world^.characterPosY) (world^.sprites)
 
 
 main :: IO ()
@@ -39,9 +43,16 @@ main = do
       (w,h,charSprite) = imageToPicture True . RGBA . computeS $ extract offset size arr
   play window black 60 (defaultWorld (scale 2 3 charSprite)) drawWorld keyHandler (flip const)
 
-keyHandler key world =
-    case key of
-      KeyUp Down -> world { _characterPosition = (world^.characterPosition_1, world^.characterPosition_2 + tileTranslate 1)
-      KeyDown Down -> world { _characterPosition = (world^.characterPosition_1, world^.characterPosition_2 1 tileTranslate 1)
-      KeyLeft Down -> world { _characterPosition = (world^.characterPosition_1 - tileTranslate 1, world^.characterPosition_2)
-      KeyRight Down -> world { _characterPosition = (world^.characterPosition_1 + tileTranslate 1, world^.characterPosition_2)
+keymap :: Map (Key,KeyState) (World -> World)
+keymap = fromList [ ((SpecialKey KeyUp, Down), characterMove 0 1 )
+                  , ((SpecialKey KeyDown, Down), characterMove 0 (-1))
+                  , ((SpecialKey KeyLeft, Down), characterMove (-1) 0)
+                  , ((SpecialKey KeyRight, Down),  characterMove 1 0)
+                  ]
+    where
+      characterMove xMove yMove world= world { _characterPosX = world^.characterPosX + tileTranslate xMove
+                                              , _characterPosY = world^.characterPosY + tileTranslate yMove
+                                              }
+  
+keyHandler :: Event -> World -> World
+keyHandler (EventKey k ks _ _) = findWithDefault id (k, ks) keymap
