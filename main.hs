@@ -21,7 +21,7 @@ data World = World { _characterPosX     :: Float
                    }
 $(makeLenses ''World)
 
-tileTranslate tiles = 12 * tiles
+tileTranslate tiles = 24 * tiles
 
 defaultWorld :: Picture -> World
 defaultWorld image = World { _characterPosX = tileTranslate 5
@@ -41,7 +41,7 @@ main = do
       window = InWindow "test 1" (800, 640) (0, 0)
       (offset, size) = (shapeOfList [4,12,180], shapeOfList [4, 12, 12])
       (w,h,charSprite) = imageToPicture True . RGBA . computeS $ extract offset size arr
-  play window black 60 (defaultWorld (scale 2 3 charSprite)) drawWorld keyHandler (flip const)
+  play window black 60 (defaultWorld (scale 2 2 charSprite)) drawWorld keyHandler (flip const)
 
 keymap :: Map (Key,KeyState) (World -> World)
 keymap = fromList [ ((SpecialKey KeyUp, Down), characterMove 0 1 )
