@@ -2,11 +2,12 @@
 module Entities where
 import           Control.Lens
 import           Items
+import Graphics.Gloss
 
 data EntityType = Fauna { _healthCurrent :: Int
                         , _healthMax     :: Int
                         , _size          :: Int
-                        , _eHead          :: String
+                        , _eHead         :: String
                         , _body1         :: String
                         , _body2         :: Maybe String
                         , _legs          :: String
@@ -24,6 +25,7 @@ data EntityType = Fauna { _healthCurrent :: Int
 
 
 data Entity = Entity { _name                :: String
+                     , _sprite              :: Picture
                      , _type                :: EntityType
                      , _lowTierHarvestItems :: Inventory
                      , _midTierHarvestItems :: Inventory

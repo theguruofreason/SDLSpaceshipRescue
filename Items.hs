@@ -34,7 +34,7 @@ data Item = Item { _name                   :: String
                  }
           deriving (Read, Eq)
 
-data ItemProperties = LightSource | StunGun | Bulletproof | AllowsStealth
+data ItemProperties = LightSource | StunGun | Bulletproof | AllowsStealth | Burns | Corrodes
                     deriving (Read, Eq)
                              
 $(makeLenses ''Item)
