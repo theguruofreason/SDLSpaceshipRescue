@@ -1,4 +1,5 @@
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE ExistentialQuantification #-}
 module WorldMap where
 import Control.Lens
 import System.FilePath
@@ -10,11 +11,11 @@ import Items
 import System.Random
 import Data.Array.Repa
 
-data Tile = Tile { _displayName :: String
-                 , _groundSprite :: (Shape, Shape)
-                 , _creatures :: [Entity]
-                 , _itemsOnTile :: Inventory
-                 }
+data Tile = forall sh. Shape sh => Tile { _displayName :: String
+                                        , _groundSprite :: (sh, sh)
+                                        , _creatures :: [Entity]
+                                        , _itemsOnTile :: Inventory
+                                        }
 $(makeLenses ''Tile)
 
 data TerrainTiles = TerrainTiles { _dirt :: Tile
