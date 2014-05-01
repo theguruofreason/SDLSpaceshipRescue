@@ -27,9 +27,9 @@ generatePrefixes = do
                                                               else
                                                                   firstLetter : vowel : anyLetter: []
       maybeDropThirdLetter gen prefix = case fst $ randomR (True, False) gen of
-                                          True -> reverse . drop 1 . reverse . prefix
+                                          True -> (reverse . drop 1 . reverse) prefix
                                           False -> prefix
-  return $ map determinePrefix $ zip4 allLetters1 vowels consonants allLetters2
+  return $ map (maybeDropThirdLetter aGenerator) $ map determinePrefix $ zip4 allLetters1 vowels consonants allLetters2
 
 generateSuffixes = do
   let
