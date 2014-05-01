@@ -3,7 +3,7 @@ module CreatureGen where
 import           Control.Lens
 import           Data.List     (zip4, zipWith4)
 import qualified Data.Map      as MAP
-import           Entities
+--import           Entities
 import           System.Random
 import qualified Text.JSON     as JSON
 
@@ -11,14 +11,14 @@ import qualified Text.JSON     as JSON
 --generateNPCCreature difficultyValue = do
 --  startingGen <- newStdGen
 
-bases :: [String]
-bases = ["saur", "gliatop", "grat", "felix", "panth", "canin", "canid", "big", "incat", "zephyr", "rex", "gnat"]
+defaultNameBases = ["saur", "gliatop", "grat", "felix", "panth", "canin", "canid", "big", "incat", "zephyr", "rex", "gnat"]
 
 generatePrefixes = do
   let
       randomLetters = newStdGen >>= return . randomRs ('a','z')
   allLetters1 <- randomLetters
   allLetters2 <- randomLetters
+  aGenerator <- newStdGen
   let
       vowels = filter (`elem` "aeiouy") allLetters1
       consonants = filter (not . (`elem` "aeiouy")) allLetters1
@@ -26,6 +26,9 @@ generatePrefixes = do
                                                                   firstLetter : consonant : anyLetter : []
                                                               else
                                                                   firstLetter : vowel : anyLetter: []
+      maybeDropThirdLetter gen prefix = case fst $ randomR (True, False) gen of
+                                          True -> reverse . drop 1 . reverse . prefix
+                                          False -> prefix
   return $ map determinePrefix $ zip4 allLetters1 vowels consonants allLetters2
 
 generateSuffixes = do
@@ -42,8 +45,12 @@ generateSuffixes = do
   return $ map determineSuffix $ zip3 allLetters1 vowels consonants
 
 
-generateName :: StdGen -> (String, StdGen)
-generateName gen = 
+generateNames :: StdGen -> IO [String]
+generateNames gen = do
+  prefixes <- generatePrefixes
+  suffixes <- generateSuffixes
+  return $ zipWith3 (\ p b s -> p ++ b ++ s) prefixes defaultNameBases suffixes
+
          
 
 {-letters, vowels, consonants :: [Char]
