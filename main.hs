@@ -6,6 +6,7 @@ import           Data.Array.Repa.Repr.ForeignPtr
 import           Data.Array.Repa.Shape
 import           Data.Map
 import           Data.Maybe
+import Debug.Trace
 import           Entities
 import           Foreign.ForeignPtr
 import           Graphics.Gloss
@@ -63,6 +64,6 @@ keymap = fromList [ ((SpecialKey KeyUp, Down), characterMove 0 1 )
                                               }
 
 keyHandler :: Event -> World -> World
-keyHandler (EventKey k ks _ _) = findWithDefault id (k, ks) keymap
+keyHandler (EventKey k ks _ _) = trace (show k) $ findWithDefault id (k, ks) keymap
 keyHandler (EventMotion _) = id
 keyHandler (EventResize _) = id
