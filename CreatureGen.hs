@@ -11,7 +11,11 @@ import qualified Text.JSON     as JSON
 --generateNPCCreature difficultyValue = do
 --  startingGen <- newStdGen
 
-defaultNameBases = ["saur", "gliatop", "grat", "felix", "panth", "canin", "canid", "big", "incat", "zephyr", "rex", "gnat"]
+defaultNameBases = ["gato", "saur", "gliatop", "grat", "felix", "panth", "canin", "canid", "big", "incat", "zephyr", "rex", "gnat"]
+
+generateBases = do
+  aGenerator <- newStdGen
+  return $ map (defaultNameBases !!) $ randomRs (0, length defaultNameBases -1) aGenerator
 
 generatePrefixes = do
   let
@@ -49,7 +53,8 @@ generateNames :: StdGen -> IO [String]
 generateNames gen = do
   prefixes <- generatePrefixes
   suffixes <- generateSuffixes
-  return $ zipWith3 (\ p b s -> p ++ b ++ s) prefixes defaultNameBases suffixes
+  bases <- generateBases
+  return $ zipWith3 (\ p b s -> p ++ b ++ s) prefixes bases suffixes
 
          
 
