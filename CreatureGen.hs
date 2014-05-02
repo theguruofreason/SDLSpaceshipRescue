@@ -11,12 +11,15 @@ import qualified Text.JSON     as JSON
 --generateNPCCreature difficultyValue = do
 --  startingGen <- newStdGen
 
+defaultNameBases :: [String]
 defaultNameBases = ["gato", "saur", "gliatop", "grat", "felix", "panth", "canin", "canid", "big", "incat", "zephyr", "rex", "gnat"]
 
+generateBases :: IO [String]
 generateBases = do
   aGenerator <- newStdGen
   return $ map (defaultNameBases !!) $ randomRs (0, length defaultNameBases -1) aGenerator
 
+generatePrefixes :: IO [String]
 generatePrefixes = do
   let
       randomLetters = newStdGen >>= return . randomRs ('a','z')
@@ -35,6 +38,7 @@ generatePrefixes = do
                                           False -> prefix
   return $ map (maybeDropThirdLetter aGenerator) $ map determinePrefix $ zip4 allLetters1 vowels consonants allLetters2
 
+generateSuffixes :: IO [String]
 generateSuffixes = do
   let
       randomLetters = newStdGen >>= return . randomRs ('a','z')
@@ -49,8 +53,8 @@ generateSuffixes = do
   return $ map determineSuffix $ zip3 allLetters1 vowels consonants
 
 
-generateNames :: StdGen -> IO [String]
-generateNames gen = do
+generateNames :: IO [String]
+generateNames = do
   prefixes <- generatePrefixes
   suffixes <- generateSuffixes
   bases <- generateBases
